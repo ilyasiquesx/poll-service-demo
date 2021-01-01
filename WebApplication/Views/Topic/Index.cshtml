@@ -1,0 +1,45 @@
+﻿@model Service.ViewModels.Topics.TopicIndexModel
+
+@{
+    ViewBag.Title = "Список голосований";
+    Layout = "_Layout";
+}
+
+<h2 class="h2 text-center p-2 bg-info rounded text-white">Список голосований</h2>
+<div class="row">
+    <div class="col m-auto">
+        <p class="text-danger">* В данном списке выводятся последние 20 созданных голосований.</p>
+    </div>
+    <div class="col m-auto">
+        <a class=" btn btn-outline-success float-right" asp-controller="Topic" asp-action="Create">Создать голосование</a>
+    </div>
+</div>
+
+@if (Model.GetTopicModels.ToList().Count == 0)
+{
+    <h2 class="h2 w-50 m-auto text-center p-2 bg-warning rounded text-white">Ещё не создано ни одно голосование</h2>
+}
+else
+{
+    <table class="table text-center my-4">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Название</th>
+            <th scope="col">Кол-во голосов</th>
+            <th scope="col">Автор</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var topic in Model.GetTopicModels)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-route-id="@topic.Id">@topic.Title</a>
+                </td>
+                <td>@topic.VotesCount</td>
+                <td>@topic.CreatedBy</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,66 @@
+version: '3.1'
+
+services:
+ 
+  pollservice:
+   container_name: my-poll-service
+   restart: unless-stopped
+   ports:
+   - 5100:80
+   build: .
+   depends_on:
+     - db
+     - elasticsearch
+   environment:
+     - ConnectionString=Host=db;Port=5432;Database=voting-service;Username=postgres;Password=mysecretpassword
+     - ElasticConfiguration__Uri=http://elasticsearch:9200
+     - TZ=Europe/Moscow
+   networks:
+     - poll-service-network
+
+  db:
+   image: postgres
+   restart: always
+   environment:
+    POSTGRES_PASSWORD: mysecretpassword
+   ports:
+   - 5432:5432
+   volumes:
+   - postgres-data:/var/lib/postgresql/data
+   networks:
+     - poll-service-network
+
+  elasticsearch:
+   container_name: elasticsearch
+   image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+   ports:
+    - 9200:9200
+   volumes:
+    - elasticsearch-data:/usr/share/elasticsearch/data
+   environment:
+    - xpack.monitoring.enabled=true
+    - xpack.watcher.enabled=false
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    - discovery.type=single-node
+   networks:
+    - poll-service-network
+
+  kibana:
+   container_name: kibana
+   image: docker.elastic.co/kibana/kibana:7.6.2
+   ports:
+    - 5601:5601
+   depends_on:
+    - elasticsearch
+   environment:
+    - ELASTICSEARCH_URL=http://localhost:9200
+   networks:
+    - poll-service-network
+  
+networks:
+  poll-service-network:
+    driver: bridge
+
+volumes:
+  elasticsearch-data:
+  postgres-data:

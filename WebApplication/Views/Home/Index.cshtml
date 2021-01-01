@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Главная страница";
+}
+
+<div class="row">
+    <div class="col-lg-8 my-2 mx-auto col-md-10">
+        <div class="row">
+            <div class="jumbotron jumbotron-fluid bg-info rounded">
+                <div class="container">
+                    <h1 class="display-4 text-center text-white">Добро пожаловать!</h1>
+                    <p class="lead text-center text-white">
+                        Это демо версия проекта онлайн опросов.
+                        На этом ресурсе вы можете создать свой опрос, наполнив его вариантами ответов, поделиться с друзьями и отслеживать результаты голосования.
+                        Чтобы начать пользоваться функионалом достаточно выполнить несколько действий.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="row my-4">
+            <div class="col-md-8 m-auto text-center">
+                <a class="btn btn-danger btn-block" asp-action="Register" asp-controller="Account">Зарегистировать учетную запись</a>
+            </div>
+        </div>
+        <div class="row my-4">
+            <div class="col-md-8 m-auto text-center">
+                <a class="btn btn-warning btn-block" asp-action="Login" asp-controller="Account">Авторизироваться в системе</a>
+            </div>
+        </div>
+        <div class="row my-4">
+            <div class="col-md-8 mx-auto text-center">
+                <a class="btn btn-primary btn-block" asp-action="Index" asp-controller="Topic">Посмотреть существующие голосования</a>
+            </div>
+        </div>
+        <div class="row my-4">
+            <div class="col-md-8 mx-auto text-center">
+                <a class="btn btn-success btn-block" asp-action="Create" asp-controller="Topic">Создать свое голосование</a>
+            </div>
+        </div>
+    </div>
+</div>

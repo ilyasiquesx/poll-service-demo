@@ -1,0 +1,101 @@
+﻿@model Service.ViewModels.Topics.GetTopicDetailsModel
+
+@{
+    ViewBag.Title = "Подробности";
+    Layout = "_Layout";
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<h2 class="h2 text-center p-2 bg-info rounded text-white">Голосование "@Model.Title"</h2>
+<div class="row text-center">
+    <div class="col-lg-4">
+            <div class="row p-4">
+                <div class="col-12 text-center">Последние 5 проголосовавших</div>
+            </div>
+            <table class="table text-center">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Автор</th>
+                    <th scope="col">Дата голоса</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var user in Model.UsersVoted)
+                {
+                    <tr>
+                        <td>@user.Username</td>
+                        <td>@user.VotedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="row text-center p-2">
+            <canvas id="bar-chart-horizontal" width="800" height="450"></canvas>
+        </div>
+        <div class="row my-4 m-auto p-2">
+            <div class="col-12 mx-auto">
+                <form method="post" asp-controller="Topic" asp-action="Vote">
+                    <div class="form-group">
+                        <input class="form-control" type="hidden" value="@Model.Id" asp-for="@Model.TopicId">
+                    </div>
+                    @foreach (var option in Model.PickOptionModels)
+                    {
+                        <div class="form-check text-center m-2">
+                            <input type="radio" class="form-check-input" value="@option.Id" asp-for="@Model.OptionId">
+                            <label class="form-check-label">@option.Name</label>
+                        </div>
+                    }
+                    @if (Model.HadUserVote)
+                    {
+                        <p class="text-danger text-center">* Вы уже учаcтвовали в данном голосовании. Повторное голосование невозможно.</p>
+                        <button type="submit" class="btn btn-primary float-right" disabled>Голосовать</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-primary float-right">Голосовать</button>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    let dataFromController = @Html.Raw(Model.SerializedData);
+    let labels = Object.keys(dataFromController);
+    new Chart(document.getElementById("bar-chart-horizontal"), {
+        type: 'horizontalBar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Голосов",
+              backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+              data: Array.from(labels, l => dataFromController[l])
+            }
+          ]
+        },
+        options: {
+          legend: { display: false },
+          title: {
+            display: false
+          },
+          scales: {
+                  xAxes: [{
+                      gridLines: {
+                          display:true
+                      },
+                      ticks:{
+                            beginAtZero:true
+                      }
+                  }],
+                  yAxes: [{
+                      gridLines: {
+                          display:true
+                      }
+                  }]
+          }
+        }
+    });
+    </script>
